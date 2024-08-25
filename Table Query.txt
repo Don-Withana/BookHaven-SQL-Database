@@ -1,0 +1,125 @@
+
+CREATE DATABASE BookHaven;
+
+USE BookHaven;
+
+    CREATE TABLE item
+        (
+               item_code             char(3)          NOT null,
+               item_price            varchar(10),
+               stock_level           varchar(5), 
+               CONSTRAINT PRIMARY KEY (item_code)
+        );
+        
+    CREATE TABLE customer
+        (      cust_id               char(4)          NOT NULL,       
+               name                  varchar(50),
+               nic                   varchar(20),
+               contact_no            char(10),
+               email_address         varchar(100),
+               address_line_1        varchar(100),
+               address_line_2        varchar(100),
+               city                  varchar(50),
+               country               varchar(25),
+               postal_code           char(5),
+               CONSTRAINT PRIMARY KEY (cust_id)
+       );
+       
+    CREATE TABLE payment_type
+        (
+               pay_type_id           char(4)          NOT NULL,       
+               payment_method        varchar(30),
+               CONSTRAINT PRIMARY KEY (pay_type_id)
+        );
+
+    CREATE TABLE supplier_type
+        (
+               sup_type_id           char(4)          NOT NULL,       
+               sup_type              varchar(30),
+               CONSTRAINT PRIMARY KEY (sup_type_id)
+        );
+        
+    CREATE TABLE payment
+        (      
+               pay_id                char(4)          NOT NULL,       
+               amount                char(10),
+               pay_date              date,
+               pay_time              time,
+               pay_type_id           char(10),
+               CONSTRAINT PRIMARY KEY (pay_id),
+               CONSTRAINT FOREIGN KEY (pay_type_id) REFERENCES payment_type(pay_type_id)
+         );
+ 
+    CREATE TABLE supplier
+        (
+               sup_id                char(4)          NOT null,
+               f_name                varchar(50),
+               l_name                varchar(50),
+               contact_no            char(10),
+               email_address         varchar(50),
+               payment_conditions    varchar(30),
+               related_industry      varchar(20),
+               supply_quantity       char(3),
+               sup_type_id           char(4),
+               nic                   varchar(20),
+               branch                varchar(20),
+               CONSTRAINT PRIMARY KEY (sup_id),
+               CONSTRAINT FOREIGN KEY (sup_type_id) REFERENCES supplier_type(sup_type_id)
+        );        
+        
+    CREATE TABLE stationary
+        (    
+               item_code             char(3)          NOT null,
+               stationary_type       varchar(50),
+               brand                 varchar(50),
+               CONSTRAINT FOREIGN KEY (item_code) REFERENCES item(item_code)
+        );
+
+    
+    CREATE TABLE book
+        (    
+               item_code             char(3)          NOT null,      
+               isbn                  char(5),
+               title                 varchar(50),
+               genre                 varchar(50),
+               category              varchar(50),
+               author                varchar(50),
+               publisher             varchar(50),
+               year_of_publication   year,
+               CONSTRAINT FOREIGN KEY (item_code) REFERENCES item(item_code)
+        );
+
+        
+    CREATE TABLE order_
+        (  
+              order_id               char(4)          NOT null,
+              quantity               char(3),
+              order_date             date,
+              delivery_date          date,
+              dest_address           varchar(100),
+              pay_id                 char(4),
+              cust_id                char(4),
+              CONSTRAINT PRIMARY KEY (order_id),
+              CONSTRAINT FOREIGN KEY (pay_id) REFERENCES payment(pay_id),
+              CONSTRAINT FOREIGN KEY (cust_id) REFERENCES customer(cust_id)
+        );
+        
+     CREATE TABLE stock
+        (
+              item_code             char(3),       
+              sup_id                char(4),
+              CONSTRAINT PRIMARY KEY (item_code, sup_id),
+              CONSTRAINT FOREIGN KEY (item_code) REFERENCES item(item_code),
+              CONSTRAINT FOREIGN KEY (sup_id) REFERENCES supplier(sup_id)
+        );
+        
+     CREATE TABLE order_item
+        (
+              item_code             char(3),       
+              order_id              char(4),
+              CONSTRAINT PRIMARY KEY (item_code, order_id),
+              CONSTRAINT FOREIGN KEY (item_code) REFERENCES item(item_code),
+              CONSTRAINT FOREIGN KEY (order_id) REFERENCES order_(order_id)
+        );
+
+
